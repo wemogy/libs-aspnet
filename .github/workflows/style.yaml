@@ -1,0 +1,19 @@
+name: Check Coding Style
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check-coding-syle:
+    name: Check Coding Style
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      # Check EditorConfig
+      - name: Install eclint
+        run: sudo npm install -g eclint
+      - name: Check EditorConfig style
+        run: eclint check $(git ls-files)

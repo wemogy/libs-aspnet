@@ -1,0 +1,30 @@
+name: "Build .NET"
+description: "Build .NET"
+inputs:
+  wemogy-packages-token:
+    description: "The token to use to authenticate with the wemogy-packages service"
+    required: true
+  version:
+    description: "The version of the build"
+    required: true
+  configuration:
+    description: "The Build Configuration"
+    required: true
+    default: "Release"
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+        source-url: https://nuget.pkg.github.com/wemogy/index.json
+      env:
+        NUGET_AUTH_TOKEN: ${{ inputs.wemogy-packages-token }}
+    - name: Restore dependencies
+      working-directory: src
+      shell: bash
+      run: dotnet restore
+    - name: Build
+      working-directory: src
+      shell: bash
+      run: dotnet build --configuration ${{ inputs.configuration }} --no-restore

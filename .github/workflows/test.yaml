@@ -1,0 +1,41 @@
+name: Tests
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      # .NET Tests
+      - name: Build .NET
+        uses: ./.github/actions/dotnet
+        with:
+          wemogy-packages-token: ${{ secrets.WEMOGY_PACKAGES_TOKEN }}
+          version: ${{ steps.release-version.outputs.next-version }}${{ github.event.inputs.version && 'pre' || '' }}
+
+      - name: Test .NET Solution
+        working-directory: src
+        shell: bash
+        run: dotnet test -c Release /p:CollectCoverage=true -m:1
+
+      - name: Code Coverage Summary Report
+        uses: irongut/CodeCoverageSummary@v1.0.2
+        with:
+          filename: src/coverage.cobertura.xml
+          badge: true
+          format: 'markdown'
+          output: 'both'
+
+      - name: Add Coverage PR Comment
+        uses: marocchino/sticky-pull-request-comment@v2.5.0
+        if: github.event_name == 'pull_request'
+        with:
+          recreate: true
+          path: code-coverage-results.md

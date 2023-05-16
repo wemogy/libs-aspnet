@@ -1,0 +1,55 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <!-- This is a workaround, needed to include the ProjectReferences to the NuGet package -->
+    <!-- See https://github.com/nuget/home/issues/3891 to track the issue -->
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Authors>wemogy GmbH</Authors>
+    <Company>wemogy GmbH</Company>
+    <PackageDescription>ASP.NET Core Helpers</PackageDescription>
+    <PackageTags>wemogy,core,libs</PackageTags>
+    <RepositoryUrl>https://github.com/wemogy/libs</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="prometheus-net" Version="8.0.0" />
+    <PackageReference Include="prometheus-net.AspNetCore" Version="8.0.0" />
+    <PackageReference Include="GraphQL" Version="4.5.0" />
+    <PackageReference Include="GraphQL.DataLoader" Version="4.1.0" />
+    <PackageReference Include="GraphQL.MicrosoftDI" Version="4.5.0" />
+    <PackageReference Include="GraphQL.Server.Transports.AspNetCore" Version="5.0.2" />
+    <PackageReference Include="GraphQL.Server.Transports.AspNetCore.SystemTextJson" Version="5.0.2" />
+    <PackageReference Include="GraphQL.Server.Ui.Altair" Version="5.0.2" />
+    <PackageReference Include="GraphQL.Server.Ui.Playground" Version="5.0.2" />
+    <PackageReference Include="GraphQL.SystemTextJson" Version="4.5.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="6.0.5" />
+    <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.6.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.AzureKeyVault" Version="3.1.14" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+    <PackageReference Include="RestSharp" Version="107.3.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.4.0" />
+    <PackageReference Include="Wemogy.Core" Version="0.6.1" />
+    <PackageReference Include="Wemogy.DataAccess" Version="0.1.49" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference PrivateAssets="all" Include="..\..\..\exceptions\src\Wemogy.Exceptions\Wemogy.Exceptions.csproj" />
+  </ItemGroup>
+
+  <!-- This is a workaround, needed to include the ProjectReferences to the NuGet package -->
+  <!-- See https://github.com/nuget/home/issues/3891 to track the issue -->
+  <Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">
+    <ItemGroup>
+      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths-&gt;WithMetadataValue('ReferenceSourceTarget', 'ProjectReference'))" />
+    </ItemGroup>
+  </Target>
+</Project>

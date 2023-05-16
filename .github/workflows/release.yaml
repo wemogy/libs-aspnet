@@ -1,0 +1,69 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      pre-release:
+        description: Genereates a Pre-Release when checked
+        type: boolean
+        required: false
+        default: "false"
+  push:
+    branches:
+      - release/**
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get version for next release
+        if: ${{ github.event.inputs.version == '' }}
+        uses: wemogy/next-version-action@2.0.3
+        id: release-version
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/checkout@v2
+
+      # Nuget
+      - name: Build .NET
+        uses: ./.github/actions/dotnet
+        with:
+          wemogy-packages-token: ${{ secrets.WEMOGY_PACKAGES_TOKEN }}
+          version: ${{ steps.release-version.outputs.next-version }}${{ github.event.inputs.version && 'pre' || '' }}
+      - name: Create Nuget package(s)
+        run: dotnet pack --no-build --configuration Release /p:VersionPrefix=${{ steps.release-version.outputs.next-version }}${{ github.event.inputs.version && 'pre' || '' }}
+        working-directory: src
+      - name: Publish Nuget package(s)
+        run: dotnet nuget push **/**/*.nupkg --skip-duplicate --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.PUBLIC_NUGET_TOKEN }}
+        working-directory: src
+
+      # Update Documentation
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16.x"
+      - run: yarn install
+        working-directory: docs/public
+      - run: yarn build
+        working-directory: docs/public
+      - run: |
+          git config --global user.name $GITHUB_ACTOR
+          git config --global user.email $GITHUB_ACTOR@users.noreply.github.com
+          yarn deploy --skip-build
+        working-directory: docs/public
+        env:
+          GIT_USER: $GITHUB_ACTOR
+          GIT_PASS: ${{ secrets.GITHUB_TOKEN }}
+
+      # GitHub
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Version ${{ steps.release-version.outputs.next-version }}${{ github.event.inputs.version && 'pre' || '' }}
+          tag_name: ${{ steps.release-version.outputs.next-version-name }}${{ github.event.inputs.version && 'pre' || '' }}
+          prerelease: ${{ github.event.inputs.pre-release || false }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
