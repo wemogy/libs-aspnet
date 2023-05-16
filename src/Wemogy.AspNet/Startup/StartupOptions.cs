@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using Wemogy.AspNet.Monitoring;
 using Wemogy.AspNet.Swagger;
+using Wemogy.Core.Monitoring;
 
 namespace Wemogy.AspNet.Startup;
 
