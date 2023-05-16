@@ -1,6 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Wemogy.AspNet.Auth.Requirements;
 
 namespace Wemogy.AspNet.Auth.Handlers

@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc.Formatters;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Net.Http.Headers;
 
 namespace Wemogy.AspNet.Formatters;

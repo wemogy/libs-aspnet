@@ -1,6 +1,6 @@
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Http;
+using Microsoft.AspNetCore.Http;
 using Wemogy.Core.Errors.Exceptions;
 
 namespace Wemogy.AspNet.Middlewares

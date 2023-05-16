@@ -1,5 +1,5 @@
-using Microsoft.AspNet.Authentication.JwtBearer;
-using Microsoft.AspNet.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Wemogy.AspNet.Auth.Handlers;
 using Wemogy.AspNet.Auth.Requirements;

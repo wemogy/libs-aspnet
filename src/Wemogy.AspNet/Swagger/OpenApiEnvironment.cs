@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNet.SwaggerGen;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using Wemogy.AspNet.Swagger;
 
 namespace Wemogy.AspNet.Swagger

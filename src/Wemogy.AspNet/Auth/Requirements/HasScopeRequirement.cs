@@ -1,5 +1,5 @@
 using System;
-using Microsoft.AspNet.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Wemogy.AspNet.Auth.Requirements
 {

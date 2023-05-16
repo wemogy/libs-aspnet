@@ -1,6 +1,6 @@
 using System;
 using System.Security.Claims;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Wemogy.AspNet.Controllers
 {
