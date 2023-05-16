@@ -2,6 +2,7 @@ using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Prometheus;
+using Wemogy.Core.Monitoring;
 
 namespace Wemogy.AspNet.Monitoring
 {
