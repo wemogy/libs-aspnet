@@ -17,7 +17,7 @@ jobs:
       - name: Build .NET
         uses: ./.github/actions/dotnet
         with:
-          version: ${{ steps.release-version.outputs.next-version }}${{ github.event.inputs.version && 'pre' || '' }}
+          version: "1.0.0-test"
 
       - name: Test .NET Solution
         working-directory: src

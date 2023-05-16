@@ -1,6 +1,6 @@
 using System;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Refit;
 
 namespace Wemogy.AspNet.Refit
