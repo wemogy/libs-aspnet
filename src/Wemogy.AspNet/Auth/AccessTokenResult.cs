@@ -1,4 +1,3 @@
-
 using System.Text.Json.Serialization;
 
 namespace Wemogy.AspNet.Auth
@@ -19,5 +18,12 @@ namespace Wemogy.AspNet.Auth
 
         [JsonPropertyName("access_token")]
         public string AccessToken { get; set; }
+
+        public AccessTokenResult()
+        {
+            TokenType = string.Empty;
+            Scope = string.Empty;
+            AccessToken = string.Empty;
+        }
     }
 }

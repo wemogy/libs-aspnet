@@ -46,7 +46,7 @@ namespace Wemogy.AspNet.Auth.AzureActiveDirectory
             var response = await _client.SendAsync(request);
             var json = await response.Content.ReadAsStringAsync();
             var tokenResult = JsonSerializer.Deserialize<AccessTokenResult>(json);
-            return tokenResult;
+            return tokenResult ?? throw new Exception($"Failed to exchange token: {json}");
         }
     }
 }

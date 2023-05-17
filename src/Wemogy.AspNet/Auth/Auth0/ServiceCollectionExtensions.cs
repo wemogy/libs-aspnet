@@ -10,14 +10,10 @@ namespace Wemogy.AspNet.Auth.Auth0
     {
         // Taken from: https://auth0.com/docs/quickstart/backend/aspnet-core-webapi/01-authorization
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="builder"></param>
+        /// <param name="builder">The AuthenticationBuilder.</param>
         /// <param name="authority">Your Auth0 domain. Example: https://xxx.eu.auth0.com/</param>
         /// <param name="audience">Your Api Identifier. Example: https://api </param>
-        /// <param name="roleClaimType"></param>
-        /// <returns></returns>
+        /// <param name="roleClaimType">The role claim type.</param>
         public static AuthenticationBuilder AddAuth0Authentication(
             this AuthenticationBuilder builder,
             string authority,
@@ -27,12 +23,11 @@ namespace Wemogy.AspNet.Auth.Auth0
             return AddAuth0Authentication(builder, JwtBearerDefaults.AuthenticationScheme, authority, audience, roleClaimType);
         }
 
-        /// <param name="builder"></param>
+        /// <param name="builder">The Authentication Builder</param>
         /// <param name="scheme">Name of the Authentication Scheme</param>
-        /// <param name="authority">Your Auth0 domain. Example: https://xxx.eu.auth0.com/</param>
+        /// <param name="authority">Your Auth0 domain. Example: https://xyz.eu.auth0.com/</param>
         /// <param name="audience">Your Api Identifier. Example: https://api </param>
-        /// <param name="roleClaimType"></param>
-        /// <returns></returns>
+        /// <param name="roleClaimType">Type of your claims</param>
         public static AuthenticationBuilder AddAuth0Authentication(
             this AuthenticationBuilder builder,
             string scheme,
@@ -66,6 +61,7 @@ namespace Wemogy.AspNet.Auth.Auth0
                         {
                             context.Token = accessToken;
                         }
+
                         return Task.CompletedTask;
                     }
                 };

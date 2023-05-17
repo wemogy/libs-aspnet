@@ -9,7 +9,9 @@ namespace Wemogy.AspNet.Refit
     {
         public int Order { get; set; } = int.MaxValue - 10;
 
-        public void OnActionExecuting(ActionExecutingContext context) { }
+        public void OnActionExecuting(ActionExecutingContext context)
+        {
+        }
 
         public void OnActionExecuted(ActionExecutedContext context)
         {
