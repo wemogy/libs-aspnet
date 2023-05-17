@@ -38,7 +38,10 @@ namespace Wemogy.AspNet.Startup
                 serviceCollection.AddDefaultSwagger(options.OpenApiEnvironment);
             }
 
-            serviceCollection.AddDefaultMonitoring(options.MonitoringEnvironment);
+            if (options.MonitoringEnvironment != null)
+            {
+                serviceCollection.AddDefaultMonitoring(options.MonitoringEnvironment);
+            }
 
             serviceCollection.AddDefaultControllers();
         }
@@ -75,7 +78,10 @@ namespace Wemogy.AspNet.Startup
                 applicationBuilder.UseDefaultSwagger(options.OpenApiEnvironment);
             }
 
-            applicationBuilder.UseDefaultMonitoring(options.MonitoringEnvironment);
+            if (options.MonitoringEnvironment != null)
+            {
+                applicationBuilder.UseDefaultMonitoring(options.MonitoringEnvironment);
+            }
 
             applicationBuilder.UseDefaultRouting();
 
@@ -84,7 +90,7 @@ namespace Wemogy.AspNet.Startup
             applicationBuilder.UseAuthentication();
             applicationBuilder.UseAuthorization();
 
-            applicationBuilder.UseErrorHandlerMiddleware();
+            //applicationBuilder.UseErrorHandlerMiddleware();
             applicationBuilder.UseDefaultEndpoints();
         }
 
