@@ -4,6 +4,12 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <CoverletOutput>$(SolutionDir)</CoverletOutput>
+    <CoverletOutputFormat>json,lcov,cobertura</CoverletOutputFormat>
+    <MergeWith>$(SolutionDir)/coverage.json</MergeWith>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <Authors>wemogy GmbH</Authors>
     <Company>wemogy GmbH</Company>
     <PackageDescription>ASP.NET Helpers</PackageDescription>
@@ -26,6 +32,6 @@
     <PackageReference Include="RestSharp" Version="107.3.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.4.0" />
-    <PackageReference Include="Wemogy.Core" Version="1.1.0" />
+    <PackageReference Include="Wemogy.Core" Version="1.1.1" />
   </ItemGroup>
 </Project>

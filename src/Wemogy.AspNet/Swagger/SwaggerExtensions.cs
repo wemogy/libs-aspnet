@@ -110,4 +110,3 @@ namespace Wemogy.AspNet.Swagger
         }
     }
 }
-
