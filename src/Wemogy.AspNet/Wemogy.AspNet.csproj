@@ -4,6 +4,12 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <CoverletOutput>$(SolutionDir)</CoverletOutput>
+    <CoverletOutputFormat>json,lcov,cobertura</CoverletOutputFormat>
+    <MergeWith>$(SolutionDir)/coverage.json</MergeWith>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <Authors>wemogy GmbH</Authors>
     <Company>wemogy GmbH</Company>
     <PackageDescription>ASP.NET Helpers</PackageDescription>
