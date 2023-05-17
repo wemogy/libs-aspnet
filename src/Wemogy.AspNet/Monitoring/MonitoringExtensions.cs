@@ -37,4 +37,3 @@ namespace Wemogy.AspNet.Monitoring
         }
     }
 }
-

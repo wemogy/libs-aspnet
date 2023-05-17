@@ -10,11 +10,10 @@ namespace Wemogy.AspNet.Startup;
 public class StartupOptions
 {
     internal OpenApiEnvironment? OpenApiEnvironment { get; private set; }
-    internal MonitoringEnvironment MonitoringEnvironment { get; private set; }
+    internal MonitoringEnvironment? MonitoringEnvironment { get; private set; }
 
     public StartupOptions()
     {
-        MonitoringEnvironment = new MonitoringEnvironment(Assembly.GetCallingAssembly().GetName().Name);
     }
 
     public OpenApiEnvironment AddOpenApi(string version, string? pathToXmlDocumentationFile = null)
