@@ -27,7 +27,6 @@ public class StartupOptions
     /// Adds and configures logging and monitoring for the application.
     /// </summary>
     /// <param name="serviceName">Name of the (micro)service as it should appear in the logs an graphs (e.g. "core-main")</param>
-    /// <returns></returns>
     public MonitoringEnvironment AddMonitoring(string serviceName)
     {
         MonitoringEnvironment = new MonitoringEnvironment(serviceName);

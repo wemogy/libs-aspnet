@@ -32,14 +32,14 @@ namespace Wemogy.AspNet.Controllers
         {
             var headers = new Dictionary<string, string>();
 
-            if (this._httpContextAccessor.HttpContext == null)
+            if (_httpContextAccessor.HttpContext == null)
             {
                 return headers;
             }
 
-            if (this._httpContextAccessor.HttpContext.User.Identity != null && this._httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+            if (_httpContextAccessor.HttpContext.User.Identity != null && _httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
             {
-                var claimsIdentity = this._httpContextAccessor.HttpContext.User.Identity as ClaimsIdentity;
+                var claimsIdentity = _httpContextAccessor.HttpContext.User.Identity as ClaimsIdentity;
                 var nameIdentifier = claimsIdentity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (nameIdentifier != null)
                 {
@@ -47,9 +47,10 @@ namespace Wemogy.AspNet.Controllers
                 }
             }
 
-            if (this._httpContextAccessor.HttpContext.Request.Headers.ContainsKey(_tenantIdHeaderKey))
+            if (_httpContextAccessor.HttpContext.Request.Headers.ContainsKey(_tenantIdHeaderKey))
             {
-                var tenantIdHeader = this._httpContextAccessor.HttpContext.Request.Headers[_tenantIdHeaderKey].FirstOrDefault();
+                var tenantIdHeader = _httpContextAccessor.HttpContext.Request.Headers[_tenantIdHeaderKey].FirstOrDefault();
+
                 // ensure that tenant id is a GUID
                 if (Guid.TryParse(tenantIdHeader, out Guid tenantId))
                 {
@@ -57,7 +58,7 @@ namespace Wemogy.AspNet.Controllers
                 }
                 else
                 {
-                    throw new InvalidHeaderException(_tenantIdHeaderKey, tenantIdHeader);
+                    throw new InvalidHeaderException(_tenantIdHeaderKey, tenantIdHeader ?? "No header found.");
                 }
             }
 
@@ -70,7 +71,7 @@ namespace Wemogy.AspNet.Controllers
 
             try
             {
-                restRequest = restRequest.AddHeaders(this.GetHeadersMapped());
+                restRequest = restRequest.AddHeaders(GetHeadersMapped());
                 restRequest = restRequestOperation(restRequest);
             }
             catch (InvalidHeaderException exception)
@@ -78,11 +79,15 @@ namespace Wemogy.AspNet.Controllers
                 return new BadRequestObjectResult(exception);
             }
 
-            var result = await this._restClient.ExecuteAsync(restRequest, cancellationToken);
-
+            var result = await _restClient.ExecuteAsync(restRequest, cancellationToken);
             if (!result.IsSuccessful)
             {
                 return new StatusCodeResult((int)result.StatusCode);
+            }
+
+            if (result.Content == null)
+            {
+                throw new Exception("Content is null");
             }
 
             try
@@ -103,6 +108,7 @@ namespace Wemogy.AspNet.Controllers
             {
                 Console.WriteLine(e.Message);
                 Console.WriteLine(e.StackTrace);
+
                 // ToDo: decide if we throw an exception here, because in this case the JSON could be invalid
                 return new OkObjectResult(result.Content);
             }
@@ -111,55 +117,55 @@ namespace Wemogy.AspNet.Controllers
         protected Task<ActionResult> JsonPostGatewayAsync<TRequest>(string resource, TRequest request, CancellationToken cancellationToken, bool deserializeContent = false)
             where TRequest : class
         {
-            return this.JsonGatewayAsync(resource, Method.Post, req => req.AddJsonBody(request), cancellationToken, deserializeContent);
+            return JsonGatewayAsync(resource, Method.Post, req => req.AddJsonBody(request), cancellationToken, deserializeContent);
         }
 
         protected Task<ActionResult> JsonPostGatewayAsync(string resource, CancellationToken cancellationToken)
         {
-            return this.JsonGatewayAsync(resource, Method.Post, req => req, cancellationToken);
+            return JsonGatewayAsync(resource, Method.Post, req => req, cancellationToken);
         }
 
         protected Task<ActionResult> JsonPutGatewayAsync<TRequest>(string resource, TRequest request, CancellationToken cancellationToken)
             where TRequest : class
         {
-            return this.JsonGatewayAsync(resource, Method.Put, req => req.AddJsonBody(request), cancellationToken);
+            return JsonGatewayAsync(resource, Method.Put, req => req.AddJsonBody(request), cancellationToken);
         }
 
         protected Task<ActionResult> JsonDeleteGatewayAsync<TRequest>(string resource, TRequest request, CancellationToken cancellationToken)
             where TRequest : class
         {
-            return this.JsonGatewayAsync(resource, Method.Delete, req => req.AddJsonBody(request), cancellationToken);
+            return JsonGatewayAsync(resource, Method.Delete, req => req.AddJsonBody(request), cancellationToken);
         }
 
         protected Task<ActionResult> JsonDeleteGatewayAsync(string resource, CancellationToken cancellationToken)
         {
-            return this.JsonGatewayAsync(resource, Method.Delete, req => req, cancellationToken);
+            return JsonGatewayAsync(resource, Method.Delete, req => req, cancellationToken);
         }
 
         protected Task<ActionResult> JsonGetGatewayAsync(string resource, CancellationToken cancellationToken)
         {
-            return this.JsonGatewayAsync(resource, Method.Get, req => req, cancellationToken);
+            return JsonGatewayAsync(resource, Method.Get, req => req, cancellationToken);
         }
 
         protected Task<ActionResult> JsonPatchGatewayAsync<TRequest>(string resource, TRequest request, CancellationToken cancellationToken)
             where TRequest : class
         {
-            return this.JsonGatewayAsync(resource, Method.Patch, req => req.AddJsonBody(request), cancellationToken);
+            return JsonGatewayAsync(resource, Method.Patch, req => req.AddJsonBody(request), cancellationToken);
         }
 
         protected Task<ActionResult> GraphQlGatewayAsync(string graphQlEndpoint, JsonDocument graphQlRequest, CancellationToken cancellationToken)
         {
-            return this.JsonPostGatewayAsync(graphQlEndpoint, graphQlRequest, cancellationToken);
+            return JsonPostGatewayAsync(graphQlEndpoint, graphQlRequest, cancellationToken);
         }
 
         protected Task<ActionResult> GraphQlGatewayAsync(JsonDocument graphQlRequest, CancellationToken cancellationToken)
         {
-            return this.JsonPostGatewayAsync("graphql", graphQlRequest, cancellationToken);
+            return JsonPostGatewayAsync("graphql", graphQlRequest, cancellationToken);
         }
 
         protected Task<ActionResult> FilePostGatewayAsync(string resource, IFormFile formFile, CancellationToken cancellationToken)
         {
-            return this.JsonGatewayAsync(resource, Method.Post, req => req.AddFile(formFile.Name, formFile.OpenReadStream, formFile.Name, formFile.ContentType), cancellationToken);
+            return JsonGatewayAsync(resource, Method.Post, req => req.AddFile(formFile.Name, formFile.OpenReadStream, formFile.Name, formFile.ContentType), cancellationToken);
         }
     }
 }

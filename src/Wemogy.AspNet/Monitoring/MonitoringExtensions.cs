@@ -10,8 +10,7 @@ namespace Wemogy.AspNet.Monitoring
     {
         public static IServiceCollection AddDefaultMonitoring(
             this IServiceCollection services,
-            MonitoringEnvironment environment
-        )
+            MonitoringEnvironment environment)
         {
             if (environment.UseApplicationInsights)
             {
@@ -26,8 +25,7 @@ namespace Wemogy.AspNet.Monitoring
 
         public static void UseDefaultMonitoring(
             this IApplicationBuilder applicationBuilder,
-            MonitoringEnvironment environment
-        )
+            MonitoringEnvironment environment)
         {
             if (environment.UsePrometheus)
             {

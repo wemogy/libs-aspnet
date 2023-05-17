@@ -1,0 +1,8 @@
+{
+  "solution": "Wemogy.AspNet.sln",
+  "solutionFolder": null,
+  "mappings": {
+    "Wemogy.Core": "../../libs-core/src/Wemogy.Core/Wemogy.Core.csproj"
+  },
+  "removeProjects": true
+}

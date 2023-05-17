@@ -5,16 +5,16 @@ namespace Wemogy.AspNet.Monitoring
 {
     public class CloudRoleNameTelemetryInitializer : ITelemetryInitializer
     {
-        readonly string roleName;
+        private readonly string _roleName;
 
         public CloudRoleNameTelemetryInitializer(string roleName)
         {
-            this.roleName = roleName;
+            _roleName = roleName;
         }
 
         public void Initialize(ITelemetry telemetry)
         {
-            telemetry.Context.Cloud.RoleName = roleName;
+            telemetry.Context.Cloud.RoleName = _roleName;
         }
     }
 }

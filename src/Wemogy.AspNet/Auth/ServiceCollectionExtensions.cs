@@ -6,7 +6,7 @@ using Wemogy.AspNet.Auth.Requirements;
 
 namespace Wemogy.AspNet.Auth
 {
-    public static class AuthExtensions
+    public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddAuthorizationDefaultPolicy(this IServiceCollection services, params string[] authenticationSchemes)
         {
@@ -23,8 +23,7 @@ namespace Wemogy.AspNet.Auth
         public static IServiceCollection AddScopeRequirements(
             this IServiceCollection services,
             string[] policyNames,
-            string[] authenticationSchemes = null
-        )
+            string[]? authenticationSchemes = null)
         {
             if (authenticationSchemes == null)
             {

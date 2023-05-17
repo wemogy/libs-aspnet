@@ -1,4 +1,3 @@
-
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -17,12 +16,16 @@ public class RawBodyInputFormatter : InputFormatter
 
     public override bool CanRead(InputFormatterContext context)
     {
-        if (context == null) throw new ArgumentNullException(nameof(context));
+        if (context == null)
+        {
+            throw new ArgumentNullException(nameof(context));
+        }
 
         var contentType = context.HttpContext.Request.ContentType;
-        if (string.IsNullOrEmpty(contentType) || contentType == "text/plain" ||
-            contentType == "application/octet-stream")
+        if (string.IsNullOrEmpty(contentType) || contentType == "text/plain" || contentType == "application/octet-stream")
+        {
             return true;
+        }
 
         return false;
     }
@@ -32,13 +35,13 @@ public class RawBodyInputFormatter : InputFormatter
         var request = context.HttpContext.Request;
         var contentType = context.HttpContext.Request.ContentType;
 
-
         if (string.IsNullOrEmpty(contentType) || contentType == "text/plain")
         {
             using var reader = new StreamReader(request.Body);
             var content = await reader.ReadToEndAsync();
             return await InputFormatterResult.SuccessAsync(content);
         }
+
         if (contentType == "application/octet-stream")
         {
             using var ms = new MemoryStream(2048);

@@ -39,13 +39,7 @@ public class ErrorHandlerMiddlewareTests
         HttpStatusCode expectedHttpStatusCode)
     {
         // Arrange
-        var errorException = (ErrorException)Activator.CreateInstance(
-            errorExceptionType,
-            "Test",
-            "Test description",
-            null);
-
-        if (errorException == null)
+        if (Activator.CreateInstance(errorExceptionType, "Test", "Test description", null) is not ErrorException errorException)
         {
             throw new Exception($"The type {errorExceptionType} is not a valid ErrorException");
         }
