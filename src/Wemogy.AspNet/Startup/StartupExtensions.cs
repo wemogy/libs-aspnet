@@ -90,7 +90,7 @@ namespace Wemogy.AspNet.Startup
             applicationBuilder.UseAuthentication();
             applicationBuilder.UseAuthorization();
 
-            //applicationBuilder.UseErrorHandlerMiddleware();
+            applicationBuilder.UseErrorHandlerMiddleware();
             applicationBuilder.UseDefaultEndpoints();
         }
 
