@@ -11,8 +11,7 @@ namespace Wemogy.AspNet.Auth.AzureActiveDirectory
             string schema,
             string instance,
             string tenantId,
-            string audience
-        )
+            string audience)
         {
             builder.AddJwtBearer(schema, options =>
             {
@@ -20,6 +19,7 @@ namespace Wemogy.AspNet.Auth.AzureActiveDirectory
                 {
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
+
                     // Issuer in a multi-domain registration is the end-user's tenant,
                     // so we can't know which tenant issues the token and we can't validate it
                     ValidateIssuer = false,

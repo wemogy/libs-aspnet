@@ -11,8 +11,7 @@ namespace Wemogy.AspNet.Swagger
     {
         public static IServiceCollection AddDefaultSwagger(
             this IServiceCollection services,
-            OpenApiEnvironment environment
-        )
+            OpenApiEnvironment environment)
         {
             services.AddSwaggerGen(c =>
             {
@@ -39,12 +38,11 @@ namespace Wemogy.AspNet.Swagger
             });
         }
 
-
         internal static void AddDefaults(
                 this SwaggerGenOptions c,
                 string name,
                 OpenApiInfo openApiInfo,
-                string pathToXmlDocumentationFile = null,
+                string? pathToXmlDocumentationFile = null,
                 bool removeDtoSuffix = true,
                 bool removeAsyncSuffix = true)
         {
@@ -67,7 +65,6 @@ namespace Wemogy.AspNet.Swagger
 
             c.IncludeXmlComments(pathToXmlDocumentationFile);
         }
-
 
         internal static void AddSecurityScheme(this SwaggerGenOptions c, SecuritySchemeDefaults securityScheme)
         {
@@ -110,4 +107,3 @@ namespace Wemogy.AspNet.Swagger
         }
     }
 }
-

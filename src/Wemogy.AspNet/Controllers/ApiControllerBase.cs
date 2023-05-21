@@ -10,7 +10,10 @@ namespace Wemogy.AspNet.Controllers
 
         public ApiControllerBase()
         {
-            GetUserId = () => User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            GetUserId = () =>
+            {
+                return User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new Exception("User is not authenticated");
+            };
         }
     }
 }

@@ -7,9 +7,6 @@ namespace Wemogy.AspNet.Auth.Requirements
     {
         public string Scope { get; }
 
-        /// <summary>
-        ///
-        /// </summary>
         /// <param name="scope">Scope to check</param>
         public HasScopeRequirement(string scope)
         {

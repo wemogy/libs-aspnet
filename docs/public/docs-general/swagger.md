@@ -76,11 +76,11 @@ public void ConfigureServices(IServiceCollection services)
 }
 
 public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-{    
+{
     // ...
-    
+
     app.UseDefaultSetup(env, _openApiGroups);
-    
+
     // or you could use UseDefaultSwagger method if you don't want to use UseDefaultSetup
     app.UseDefaultSwagger(_openApiGroups);
 }

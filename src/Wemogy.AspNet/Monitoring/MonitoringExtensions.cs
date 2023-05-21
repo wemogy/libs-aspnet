@@ -2,6 +2,7 @@ using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Prometheus;
+using Wemogy.Core.Monitoring;
 
 namespace Wemogy.AspNet.Monitoring
 {
@@ -9,8 +10,7 @@ namespace Wemogy.AspNet.Monitoring
     {
         public static IServiceCollection AddDefaultMonitoring(
             this IServiceCollection services,
-            MonitoringEnvironment environment
-        )
+            MonitoringEnvironment environment)
         {
             if (environment.UseApplicationInsights)
             {
@@ -25,8 +25,7 @@ namespace Wemogy.AspNet.Monitoring
 
         public static void UseDefaultMonitoring(
             this IApplicationBuilder applicationBuilder,
-            MonitoringEnvironment environment
-        )
+            MonitoringEnvironment environment)
         {
             if (environment.UsePrometheus)
             {
@@ -36,4 +35,3 @@ namespace Wemogy.AspNet.Monitoring
         }
     }
 }
-

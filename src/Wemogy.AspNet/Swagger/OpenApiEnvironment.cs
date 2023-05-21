@@ -43,7 +43,8 @@ namespace Wemogy.AspNet.Swagger
             return this;
         }
 
-        public OpenApiEnvironment WithFilter<TFilter>() where TFilter : IOperationFilter
+        public OpenApiEnvironment WithFilter<TFilter>()
+            where TFilter : IOperationFilter
         {
             SwaggerGenOptions.Add(c => c.OperationFilter<TFilter>());
             return this;

@@ -38,7 +38,10 @@ namespace Wemogy.AspNet.Startup
                 serviceCollection.AddDefaultSwagger(options.OpenApiEnvironment);
             }
 
-            serviceCollection.AddDefaultMonitoring(options.MonitoringEnvironment);
+            if (options.MonitoringEnvironment != null)
+            {
+                serviceCollection.AddDefaultMonitoring(options.MonitoringEnvironment);
+            }
 
             serviceCollection.AddDefaultControllers();
         }
@@ -75,7 +78,10 @@ namespace Wemogy.AspNet.Startup
                 applicationBuilder.UseDefaultSwagger(options.OpenApiEnvironment);
             }
 
-            applicationBuilder.UseDefaultMonitoring(options.MonitoringEnvironment);
+            if (options.MonitoringEnvironment != null)
+            {
+                applicationBuilder.UseDefaultMonitoring(options.MonitoringEnvironment);
+            }
 
             applicationBuilder.UseDefaultRouting();
 
@@ -114,14 +120,12 @@ namespace Wemogy.AspNet.Startup
         /// <param name="builder">An IConfigurationBuilder</param>
         /// <param name="azureKeyVaultUri">The URI to the Azure Key Vault</param>
         /// <param name="azureKeyVaultClientId">Fill, if you want to authenticate with a Service Principal, leave empty for Identity</param>
-        /// <param name="azureKeyVaultClientSecret">Fill, if you want to authenticate with a Service Principal, leave empty for Identity</param>
-        /// <returns></returns>
+        /// <param name="azureKeyVaultClientSecret">Secret. Fill, if you want to authenticate with a Service Principal, leave empty for Identity</param>
         public static IConfigurationBuilder AddAuthenticatedAzureKeyVault(
             this IConfigurationBuilder builder,
             string azureKeyVaultUri,
-            string azureKeyVaultClientId = null,
-            string azureKeyVaultClientSecret = null
-        )
+            string? azureKeyVaultClientId = null,
+            string? azureKeyVaultClientSecret = null)
         {
             // The clientId and clientSecrets fields should be left empty, as we always
             // prefer connecting to Azure KeyVault using a manage identity of the system we are
@@ -142,7 +146,5 @@ namespace Wemogy.AspNet.Startup
 
             return builder;
         }
-
-
     }
 }
