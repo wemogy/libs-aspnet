@@ -30,7 +30,6 @@ jobs:
       - name: Build .NET
         uses: ./.github/actions/dotnet
         with:
-          wemogy-packages-token: ${{ secrets.WEMOGY_PACKAGES_TOKEN }}
           version: ${{ steps.release-version.outputs.next-version }}${{ github.event.inputs.version && 'pre' || '' }}
       - name: Create Nuget package(s)
         run: dotnet pack --no-build --configuration Release /p:VersionPrefix=${{ steps.release-version.outputs.next-version }}${{ github.event.inputs.version && 'pre' || '' }}
