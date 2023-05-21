@@ -1,5 +1,6 @@
 using System.Net;
 using System.Threading.Tasks;
+using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Wemogy.Core.Errors.Exceptions;
 
@@ -56,6 +57,14 @@ namespace Wemogy.AspNet.Middlewares
 
                 response.StatusCode = (int)statusCode;
                 await response.WriteAsJsonAsync(message);
+            }
+
+            // FluentValidation support
+            catch (ValidationException exception)
+            {
+                var response = context.Response;
+                response.StatusCode = (int)HttpStatusCode.BadRequest;
+                await response.WriteAsJsonAsync(exception.Errors);
             }
         }
     }
