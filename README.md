@@ -41,7 +41,7 @@ Add the `StartupOptions` and register the default setup.
 public void ConfigureServices(IServiceCollection services)
 {
     services.AddDefaultSetup(_options);
-    
+
     // ...
 }
 ```
@@ -52,7 +52,7 @@ Make sure, the default setup gets used.
 public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 {
     app.UseDefaultSetup(env, _options);
-    
+
     // ...
 }
 ```
