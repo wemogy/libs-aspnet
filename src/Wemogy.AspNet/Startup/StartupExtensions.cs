@@ -20,18 +20,20 @@ namespace Wemogy.AspNet.Startup
             options.InputFormatters.Insert(0, new RawBodyInputFormatter());
         }
 
-        public static void AddDefaultControllers(this IServiceCollection serviceCollection)
+        public static void AddDefaultControllers(this IServiceCollection serviceCollection, bool addDapr = false)
         {
-            serviceCollection
-                .AddControllers(options => GetWemogyDefaultControllerOptions(options))
-                .AddWemogyJsonOptions();
+            var builder = serviceCollection.AddControllers(options => GetWemogyDefaultControllerOptions(options));
+            builder.AddWemogyJsonOptions();
+
+            if (addDapr)
+            {
+                builder.AddDapr();
+            }
         }
 
         public static void AddDefaultSetup(this IServiceCollection serviceCollection, StartupOptions options)
         {
             serviceCollection.AddDefaultCors();
-
-            serviceCollection.AddDefaultRouting();
 
             if (options.OpenApiEnvironment != null)
             {
@@ -43,7 +45,9 @@ namespace Wemogy.AspNet.Startup
                 serviceCollection.AddDefaultMonitoring(options.MonitoringEnvironment);
             }
 
-            serviceCollection.AddDefaultControllers();
+            serviceCollection.AddDefaultControllers(options.DaprEnvironment != null);
+
+            serviceCollection.AddDefaultRouting();
         }
 
         public static void AddDefaultCors(this IServiceCollection serviceCollection)
@@ -85,13 +89,31 @@ namespace Wemogy.AspNet.Startup
 
             applicationBuilder.UseDefaultRouting();
 
+            if (options.DaprEnvironment?.UseCloudEvents == true)
+            {
+                applicationBuilder.UseCloudEvents();
+            }
+
             applicationBuilder.UseDefaultCors();
 
             applicationBuilder.UseAuthentication();
             applicationBuilder.UseAuthorization();
 
             applicationBuilder.UseErrorHandlerMiddleware();
-            applicationBuilder.UseDefaultEndpoints();
+
+            if (options.DaprEnvironment != null)
+            {
+                applicationBuilder.UseEndpoints(endpoints =>
+                {
+                    // Register endpoints for Dapr PubSub subscription information
+                    endpoints.MapSubscribeHandler();
+                    endpoints.MapControllers();
+                });
+            }
+            else
+            {
+                applicationBuilder.UseDefaultEndpoints();
+            }
         }
 
         public static void UseDefaultRouting(this IApplicationBuilder applicationBuilder)
