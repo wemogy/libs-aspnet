@@ -39,5 +39,6 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.4.0" />
     <PackageReference Include="Wemogy.Core" Version="1.1.1" />
+    <PackageReference Include="Dapr.AspNetCore" Version="1.10.0" />
   </ItemGroup>
 </Project>

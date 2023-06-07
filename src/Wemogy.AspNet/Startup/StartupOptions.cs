@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using Wemogy.AspNet.Dapr;
 using Wemogy.AspNet.Monitoring;
 using Wemogy.AspNet.Swagger;
 using Wemogy.Core.Monitoring;
@@ -11,6 +12,7 @@ public class StartupOptions
 {
     internal OpenApiEnvironment? OpenApiEnvironment { get; private set; }
     internal MonitoringEnvironment? MonitoringEnvironment { get; private set; }
+    internal DaprEnvironment? DaprEnvironment { get; private set; }
 
     public StartupOptions()
     {
@@ -31,5 +33,14 @@ public class StartupOptions
     {
         MonitoringEnvironment = new MonitoringEnvironment(serviceName);
         return MonitoringEnvironment;
+    }
+
+    /// <summary>
+    /// Ensures, that Dapr is added to the application and registers the Dapr middleware.
+    /// </summary>
+    public DaprEnvironment AddDapr()
+    {
+        DaprEnvironment = new DaprEnvironment();
+        return DaprEnvironment;
     }
 }
