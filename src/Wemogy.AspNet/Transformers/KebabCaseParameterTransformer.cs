@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Routing;
 
 namespace Wemogy.AspNet.Transformers;
 
-public sealed class SlugifyParameterTransformer : IOutboundParameterTransformer
+public sealed class KebabCaseParameterTransformer : IOutboundParameterTransformer
 {
     public string? TransformOutbound(object? value)
     {

@@ -20,8 +20,7 @@ namespace Wemogy.AspNet.Startup
         {
             options.SuppressAsyncSuffixInActionNames = false;
             options.InputFormatters.Insert(0, new RawBodyInputFormatter());
-            options.Conventions.Add(
-                new RouteTokenTransformerConvention(new SlugifyParameterTransformer()));
+            options.Conventions.Add(new RouteTokenTransformerConvention(new KebabCaseParameterTransformer()));
         }
 
         public static void AddDefaultControllers(this IServiceCollection serviceCollection, bool addDapr = false)

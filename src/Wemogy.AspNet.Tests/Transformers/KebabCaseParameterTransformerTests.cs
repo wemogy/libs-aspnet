@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Wemogy.AspNet.Tests.Transformers;
 
-public class SlugifyParameterTransformerTests
+public class KebabCaseParameterTransformerTests
 {
     [Theory]
     [InlineData(null, null)]
@@ -12,7 +12,7 @@ public class SlugifyParameterTransformerTests
     [InlineData("TypicalControllerName", "typical-controller-name")]
     public void ShouldTransformMixedCaseString(object value, string expected)
     {
-        var transformer = new SlugifyParameterTransformer();
+        var transformer = new KebabCaseParameterTransformer();
         var result = transformer.TransformOutbound(value);
 
         result.Should().Be(expected);
