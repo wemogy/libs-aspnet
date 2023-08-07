@@ -1,6 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -9,6 +10,7 @@ using Wemogy.AspNet.Json;
 using Wemogy.AspNet.Middlewares;
 using Wemogy.AspNet.Monitoring;
 using Wemogy.AspNet.Swagger;
+using Wemogy.AspNet.Transformers;
 
 namespace Wemogy.AspNet.Startup
 {
@@ -18,6 +20,8 @@ namespace Wemogy.AspNet.Startup
         {
             options.SuppressAsyncSuffixInActionNames = false;
             options.InputFormatters.Insert(0, new RawBodyInputFormatter());
+            options.Conventions.Add(
+                new RouteTokenTransformerConvention(new SlugifyParameterTransformer()));
         }
 
         public static void AddDefaultControllers(this IServiceCollection serviceCollection, bool addDapr = false)
