@@ -1,6 +1,9 @@
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Prometheus;
 using Wemogy.Core.Monitoring;
 
@@ -18,6 +21,26 @@ namespace Wemogy.AspNet.Monitoring
                 services.AddSingleton<ITelemetryInitializer>(new CloudRoleNameTelemetryInitializer(environment.ServiceName));
             }
 
+            // Metrics
+            services.AddOpenTelemetry().WithMetrics(builder =>
+            {
+                builder.AddRuntimeInstrumentation();
+                builder.AddAspNetCoreInstrumentation();
+                builder.AddPrometheusExporter();
+            });
+
+            // Traces
+            services.AddOpenTelemetry().WithTracing(builder =>
+            {
+                builder.ConfigureResource((resource) =>
+                {
+                    resource.AddService(environment.ServiceName);
+                });
+                builder.AddAspNetCoreInstrumentation();
+                builder.AddEntityFrameworkCoreInstrumentation();
+                builder.AddOtlpExporter();
+            });
+
             services.AddSingleton(environment);
             services.AddSingleton<IMonitoringService, MonitoringService>();
             return services;
@@ -27,6 +50,8 @@ namespace Wemogy.AspNet.Monitoring
             this IApplicationBuilder applicationBuilder,
             MonitoringEnvironment environment)
         {
+
+
             if (environment.UsePrometheus)
             {
                 applicationBuilder.UseMetricServer();
