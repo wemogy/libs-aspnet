@@ -18,7 +18,7 @@ public class ErrorHandlerMiddlewareTests
     [Theory]
     [InlineData(
         typeof(AuthorizationErrorException),
-        HttpStatusCode.Unauthorized)]
+        HttpStatusCode.Forbidden)]
     [InlineData(
         typeof(ConflictErrorException),
         HttpStatusCode.Conflict)]
