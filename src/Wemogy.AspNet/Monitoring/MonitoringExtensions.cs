@@ -1,4 +1,4 @@
-using Microsoft.ApplicationInsights.Extensibility;
+using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry.Metrics;
@@ -15,18 +15,22 @@ namespace Wemogy.AspNet.Monitoring
             this IServiceCollection services,
             MonitoringEnvironment environment)
         {
-            if (environment.UseApplicationInsights)
-            {
-                services.AddApplicationInsightsTelemetry(x => x.ConnectionString = environment.ApplicationInsightsConnectionString);
-                services.AddSingleton<ITelemetryInitializer>(new CloudRoleNameTelemetryInitializer(environment.ServiceName));
-            }
-
             // Metrics
             services.AddOpenTelemetry().WithMetrics(builder =>
             {
+                foreach (var meterName in environment.MeterNames)
+                {
+                    builder.AddMeter(meterName);
+                }
+
                 builder.AddRuntimeInstrumentation();
+                builder.AddHttpClientInstrumentation();
                 builder.AddAspNetCoreInstrumentation();
-                builder.AddPrometheusExporter();
+
+                if (environment.UsePrometheus)
+                {
+                    builder.AddPrometheusExporter();
+                }
             });
 
             // Traces
@@ -34,15 +38,30 @@ namespace Wemogy.AspNet.Monitoring
             {
                 builder.ConfigureResource((resource) =>
                 {
-                    resource.AddService(environment.ServiceName);
+                    resource.AddService(environment.ServiceName, serviceVersion: environment.ServiceVersion);
                 });
+
                 builder.AddAspNetCoreInstrumentation();
                 builder.AddEntityFrameworkCoreInstrumentation();
-                builder.AddOtlpExporter();
+
+                if (environment.UseOtlpExporter)
+                {
+                    builder.AddOtlpExporter(options =>
+                    {
+                        options.Endpoint = environment.OtlpExportEndpoint;
+                    });
+                }
             });
 
+            if (environment.UseApplicationInsights)
+            {
+                services.AddOpenTelemetry().UseAzureMonitor(options =>
+                {
+                    options.ConnectionString = environment.ApplicationInsightsConnectionString;
+                });
+            }
+
             services.AddSingleton(environment);
-            services.AddSingleton<IMonitoringService, MonitoringService>();
             return services;
         }
 
@@ -50,12 +69,9 @@ namespace Wemogy.AspNet.Monitoring
             this IApplicationBuilder applicationBuilder,
             MonitoringEnvironment environment)
         {
-
-
             if (environment.UsePrometheus)
             {
-                applicationBuilder.UseMetricServer();
-                applicationBuilder.UseHttpMetrics();
+                applicationBuilder.UseOpenTelemetryPrometheusScrapingEndpoint();
             }
         }
     }
