@@ -29,7 +29,7 @@ public Startup(IConfiguration configuration)
 
     // Add Monitoring
     _options
-        .AddMonitoring(Configuration["ServiceName"])
+        .AddMonitoring(Configuration["ServiceName"], Configuration["ServiceVersion"])
         .WithApplicationInsights(Configuration["AzureApplicationInsightsConnectionString"])
         .WithPrometheus();
 }
@@ -57,4 +57,60 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 }
 ```
 
-Checkout the [Documentation](https://libs-aspnet.docs.wemogy.com/) to get information about the available classes and extensions.
+For modern or Minimal API services, this would look similar to this. In the `Program.cs`, add the `StartupOptions` and register the default setup.
+
+```csharp
+var options = new StartupOptions();
+options
+    .AddOpenApi("v1")
+
+options
+    .AddMonitoring()
+    .WithApplicationInsights(Configuration["AzureApplicationInsightsConnectionString"])
+
+// ...
+
+app.UseDefaultSetup(app.Environment, options);
+```
+
+## Monitoring
+
+We use Open Telemetry to provide monitoring for your application. The library provides a default setup for you, which you can use as is or extend to your needs. Open Telemetry interacts with the native Metrics and Tracing capabilities of ASP.NET.
+
+### Create Monitoring class
+
+Every project should have a `Observability.cs` class, which is responsible for defining the Meters.
+
+```csharp
+using System.Diagnostics.Metrics;
+using System.Reflection;
+using OpenTelemetry.Metrics;
+
+public class Observability
+{
+    // Define a default Meter with name and version
+    public static readonly Meter Meter = new("ServiceName", Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "0.0.0");
+
+    // Create Counters, Histograms, etc. from that default Meter
+    public  static readonly Counter<long> Pings = Meter.CreateCounter<long>("service_countername", description: "Total number of pings");
+    public static readonly Histogram<int> PingDelay = Meter.CreateHistogram<int>("service_histgramname", "ms", "Think time in ms for a ping");
+}
+```
+
+Make sure to register the Meter at Startup.
+
+```csharp
+var options = new StartupOptions();
+options
+    .AddMonitoring(Configuration["ServiceName"], Configuration["ServiceVersion"])
+    .WithMeter(Observability.Meter.Name)
+    // ...
+```
+
+Use the Meter in your code.
+
+```csharp
+Observability.Pings.Add(1);
+
+Observability.PingDelay.Record(new Random().Next(50, 100));
+```
