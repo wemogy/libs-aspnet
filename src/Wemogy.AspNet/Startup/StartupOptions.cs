@@ -28,10 +28,20 @@ public class StartupOptions
     /// <summary>
     /// Adds and configures logging and monitoring for the application.
     /// </summary>
-    /// <param name="serviceName">Name of the (micro)service as it should appear in the logs an graphs (e.g. "core-main")</param>
-    public MonitoringEnvironment AddMonitoring(string serviceName)
+    /// <param name="serviceName">Name of the service as it should appear in the logs an graphs (e.g. "core-main")</param>
+    /// <param name="serviceVersion">Version of the service as it should appear in the logs an graphs (e.g. "1.2.3")</param>
+    public MonitoringEnvironment AddMonitoring(string serviceName, string serviceVersion)
     {
-        MonitoringEnvironment = new MonitoringEnvironment(serviceName);
+        MonitoringEnvironment = new MonitoringEnvironment(serviceName, serviceVersion);
+        return MonitoringEnvironment;
+    }
+
+    /// <summary>
+    /// Adds and configures logging and monitoring for the application.
+    /// </summary>
+    public MonitoringEnvironment AddMonitoring()
+    {
+        MonitoringEnvironment = new MonitoringEnvironment();
         return MonitoringEnvironment;
     }
 
