@@ -82,7 +82,7 @@ namespace Wemogy.AspNet.Controllers
             var result = await _restClient.ExecuteAsync(restRequest, cancellationToken);
             if (!result.IsSuccessful)
             {
-                return new StatusCodeResult((int)result.StatusCode);
+                return StatusCode((int)result.StatusCode, result.Content);
             }
 
             if (result.Content == null)
