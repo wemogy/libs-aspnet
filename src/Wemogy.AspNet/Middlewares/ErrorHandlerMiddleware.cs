@@ -30,7 +30,7 @@ namespace Wemogy.AspNet.Middlewares
                 switch (exception)
                 {
                     case AuthorizationErrorException:
-                        statusCode = HttpStatusCode.Unauthorized;
+                        statusCode = HttpStatusCode.Forbidden;
                         break;
                     case ConflictErrorException:
                         statusCode = HttpStatusCode.Conflict;
