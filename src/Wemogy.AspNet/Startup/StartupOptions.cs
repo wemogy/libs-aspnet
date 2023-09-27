@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Wemogy.AspNet.Dapr;
@@ -13,9 +14,11 @@ public class StartupOptions
     internal OpenApiEnvironment? OpenApiEnvironment { get; private set; }
     internal MonitoringEnvironment? MonitoringEnvironment { get; private set; }
     internal DaprEnvironment? DaprEnvironment { get; private set; }
+    internal HashSet<Type> Middlewares { get; private set; }
 
     public StartupOptions()
     {
+        Middlewares = new HashSet<Type>();
     }
 
     public OpenApiEnvironment AddOpenApi(string version, string? pathToXmlDocumentationFile = null)
@@ -52,5 +55,12 @@ public class StartupOptions
     {
         DaprEnvironment = new DaprEnvironment();
         return DaprEnvironment;
+    }
+
+    public StartupOptions AddMiddleware<TMiddleware>()
+        where TMiddleware : class
+    {
+        Middlewares.Add(typeof(TMiddleware));
+        return this;
     }
 }
