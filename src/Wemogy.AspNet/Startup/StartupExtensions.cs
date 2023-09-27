@@ -103,6 +103,10 @@ namespace Wemogy.AspNet.Startup
             applicationBuilder.UseAuthorization();
 
             applicationBuilder.UseErrorHandlerMiddleware();
+            foreach (var middleware in options.Middlewares)
+            {
+                applicationBuilder.UseMiddleware(middleware);
+            }
 
             if (options.DaprEnvironment != null)
             {
