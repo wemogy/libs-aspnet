@@ -16,6 +16,11 @@ public class StartupOptions
     internal DaprEnvironment? DaprEnvironment { get; private set; }
     internal HashSet<Type> Middlewares { get; private set; }
 
+    /// <summary>
+    /// Sets the <see cref="Microsoft.AspNetCore.Mvc.MvcOptions.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes"/> property for all contollers.
+    /// </summary>
+    public bool SuppressImplicitRequiredAttributeForNonNullableReferenceTypes { get; set; }
+
     public StartupOptions()
     {
         Middlewares = new HashSet<Type>();
