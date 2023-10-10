@@ -16,16 +16,22 @@ namespace Wemogy.AspNet.Startup
 {
     public static class StartupExtensions
     {
-        public static void GetWemogyDefaultControllerOptions(MvcOptions options)
+        /// <summary>
+        /// Set the default <see cref="MvcOptions"/> settings for Controllers in wemogy applications.
+        /// </summary>
+        /// <param name="options">The <see cref="MvcOptions"/> to update.</param>
+        /// <param name="suppressImplicitRequiredAttributeForNonNullableReferenceTypes">The <see cref="Microsoft.AspNetCore.Mvc.MvcOptions.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes"/> property for all contollers.</param>
+        public static void GetWemogyDefaultControllerOptions(MvcOptions options, bool suppressImplicitRequiredAttributeForNonNullableReferenceTypes = false)
         {
             options.SuppressAsyncSuffixInActionNames = false;
             options.InputFormatters.Insert(0, new RawBodyInputFormatter());
             options.Conventions.Add(new RouteTokenTransformerConvention(new KebabCaseParameterTransformer()));
+            options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = suppressImplicitRequiredAttributeForNonNullableReferenceTypes;
         }
 
-        public static void AddDefaultControllers(this IServiceCollection serviceCollection, bool addDapr = false)
+        public static void AddDefaultControllers(this IServiceCollection serviceCollection, bool addDapr = false, bool suppressImplicitRequiredAttributeForNonNullableReferenceTypes = false)
         {
-            var builder = serviceCollection.AddControllers(options => GetWemogyDefaultControllerOptions(options));
+            var builder = serviceCollection.AddControllers(options => GetWemogyDefaultControllerOptions(options, suppressImplicitRequiredAttributeForNonNullableReferenceTypes));
             builder.AddWemogyJsonOptions();
 
             if (addDapr)
@@ -48,7 +54,7 @@ namespace Wemogy.AspNet.Startup
                 serviceCollection.AddDefaultMonitoring(options.MonitoringEnvironment);
             }
 
-            serviceCollection.AddDefaultControllers(options.DaprEnvironment != null);
+            serviceCollection.AddDefaultControllers(options.DaprEnvironment != null, options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes);
 
             serviceCollection.AddDefaultRouting();
         }
