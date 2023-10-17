@@ -31,7 +31,11 @@ namespace Wemogy.AspNet.Swagger
             {
                 foreach (var group in environment.OpenApiGroups)
                 {
-                    c.SwaggerEndpoint($"/swagger/{group.Key}/swagger.json", $"{group.Value.Title} - {group.Value.Version}");
+                    // Only publish groups that are marked as publishable
+                    if (group.Value.Publish)
+                    {
+                        c.SwaggerEndpoint($"/swagger/{group.Key}/swagger.json", $"{group.Value.OpenApiInfo.Title} - {group.Value.OpenApiInfo.Version}");
+                    }
                 }
             });
         }
