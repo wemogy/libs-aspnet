@@ -33,8 +33,6 @@ namespace Wemogy.AspNet.Swagger
                 {
                     c.SwaggerEndpoint($"/swagger/{group.Key}/swagger.json", $"{group.Value.Title} - {group.Value.Version}");
                 }
-
-                c.RoutePrefix = string.Empty;
             });
         }
 
