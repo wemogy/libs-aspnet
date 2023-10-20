@@ -86,6 +86,10 @@ namespace Wemogy.AspNet.Startup
                 applicationBuilder.UseDeveloperExceptionPage();
             }
 
+            // Must come before any "UseSwagger()" calls because the Swagger middleware, when it knows that the request
+            // is for Swagger, it doesn't forward the request onto the next middleware, it just immediately returns.
+            applicationBuilder.UseDefaultCors();
+
             if (options.OpenApiEnvironment != null)
             {
                 applicationBuilder.UseDefaultSwagger(options.OpenApiEnvironment);
@@ -102,8 +106,6 @@ namespace Wemogy.AspNet.Startup
             {
                 applicationBuilder.UseCloudEvents();
             }
-
-            applicationBuilder.UseDefaultCors();
 
             applicationBuilder.UseAuthentication();
             applicationBuilder.UseAuthorization();
