@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using Prometheus;
 using Wemogy.Core.Monitoring;
 
 namespace Wemogy.AspNet.Monitoring
@@ -38,7 +37,11 @@ namespace Wemogy.AspNet.Monitoring
             {
                 builder.ConfigureResource((resource) =>
                 {
-                    resource.AddService(environment.ServiceName, serviceVersion: environment.ServiceVersion);
+                    resource.AddService(
+                        serviceName: environment.ServiceName,
+                        serviceNamespace: environment.ServiceNamespace,
+                        serviceInstanceId: environment.ServiceInstanceId,
+                        serviceVersion: environment.ServiceVersion);
                 });
 
                 builder.AddAspNetCoreInstrumentation();
@@ -58,6 +61,7 @@ namespace Wemogy.AspNet.Monitoring
                 services.AddOpenTelemetry().UseAzureMonitor(options =>
                 {
                     options.ConnectionString = environment.ApplicationInsightsConnectionString;
+                    options.SamplingRatio = environment.ApplicationInsightsSamplingRatio;
                 });
             }
 
