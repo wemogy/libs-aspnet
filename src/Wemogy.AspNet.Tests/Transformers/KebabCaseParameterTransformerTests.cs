@@ -10,7 +10,7 @@ public class KebabCaseParameterTransformerTests
     [InlineData(null, null)]
     [InlineData("", null)]
     [InlineData("TypicalControllerName", "typical-controller-name")]
-    public void ShouldTransformMixedCaseString(object value, string expected)
+    public void ShouldTransformMixedCaseString(object? value, string? expected)
     {
         var transformer = new KebabCaseParameterTransformer();
         var result = transformer.TransformOutbound(value);
