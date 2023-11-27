@@ -15,6 +15,7 @@ public class StartupOptions
     internal MonitoringEnvironment? MonitoringEnvironment { get; private set; }
     internal DaprEnvironment? DaprEnvironment { get; private set; }
     internal HashSet<Type> Middlewares { get; private set; }
+    internal HashSet<Type> HealthChecks { get; private set; }
 
     /// <summary>
     /// Sets the <see cref="Microsoft.AspNetCore.Mvc.MvcOptions.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes"/> property for all contollers.
