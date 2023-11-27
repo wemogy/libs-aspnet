@@ -142,7 +142,7 @@ public void ConfigureServices(IServiceCollection services)
       .AddCheck("MyHealthCheck", () => HealthCheckResult.Healthy("Everything is fine.")
       .AddCheck("MyOtherHealthCheck", MyHealthChecker) // Implement IHealthCheck
       .AddSqlServer("<MY_CONNECTION_STRING>")
-      .AddDbContextCheck<SampleDbContext>());
+      .AddDbContextCheck<SampleDbContext>();
 
     // ...
 }
