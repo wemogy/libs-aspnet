@@ -56,7 +56,9 @@ namespace Wemogy.AspNet.Startup
 
             serviceCollection.AddDefaultControllers(options.DaprEnvironment != null, options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes);
 
-            serviceCollection.AddHealthChecks();
+            // Health checks
+            var healthChecksBuilder = serviceCollection.AddHealthChecks();
+            options.ConfigureHealthCheckBuilder?.Invoke(healthChecksBuilder);
 
             serviceCollection.AddDefaultRouting();
         }

@@ -132,18 +132,11 @@ You can add additional health checks to the default setup.
 - [Entity Framework Core DbContext probes](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-6.0#entity-framework-core-dbcontext-probe)
 
 ```csharp
-public void ConfigureServices(IServiceCollection services)
-{
-    services.AddDefaultSetup(_options);
-
-    // Health Checks
-    services
-      .AddHealthChecks()
-      .AddCheck("MyHealthCheck", () => HealthCheckResult.Healthy("Everything is fine.")
-      .AddCheck("MyOtherHealthCheck", MyHealthChecker) // Implement IHealthCheck
-      .AddSqlServer("<MY_CONNECTION_STRING>")
-      .AddDbContextCheck<SampleDbContext>();
-
-    // ...
-}
+_options.ConfigureHealthChecks(builder => {
+    builder
+        .AddCheck("MyHealthCheck", () => HealthCheckResult.Healthy("Everything is fine.")
+        .AddCheck("MyOtherHealthCheck", MyHealthChecker) // Implement IHealthCheck
+        .AddSqlServer("<MY_CONNECTION_STRING>")
+        .AddDbContextCheck<SampleDbContext>();
+});
 ```
