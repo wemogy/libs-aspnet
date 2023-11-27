@@ -87,12 +87,16 @@ We use Open Telemetry to provide monitoring for your application. The library pr
 Every project should have a `Observability.cs` class, which is responsible for defining the Meters.
 
 ```csharp
+using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using System.Reflection;
 using OpenTelemetry.Metrics;
 
 public class Observability
 {
+    // Define a default ActivitySource
+    public static readonly ActivitySource DefaultActivities = new ActivitySource("ServiceName");
+
     // Define a default Meter with name and version
     public static readonly Meter Meter = new("ServiceName", Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "0.0.0");
 
@@ -108,6 +112,7 @@ Make sure to register the Meter at Startup.
 var options = new StartupOptions();
 options
     .AddMonitoring()
+    .WithActivitySource(Observability.DefaultActivities.Name)
     .WithMeter(Observability.Meter.Name)
     // ...
 ```
@@ -118,6 +123,26 @@ Use the Meter in your code.
 Observability.Pings.Add(1);
 
 Observability.PingDelay.Record(new Random().Next(50, 100));
+```
+
+Use Activities in your Code to create sections of code that can be traced.
+
+```csharp
+using (var fistActivity = Observability.DefaultActivities.StartActivity("First section"))
+{
+    fistActivity.AddTag("date", DateTime.UtcNow.ToString());
+    fistActivity.AddTag("section", "first");
+    Thread.Sleep(100); // Do work
+    fistActivity.Stop();
+};
+
+using (var secondActivity = Observability.DefaultActivities.StartActivity("Second section"))
+{
+    secondActivity.AddTag("date", DateTime.UtcNow.ToString());
+    secondActivity.AddTag("section", "second");
+    Thread.Sleep(200); // Do work
+    secondActivity.Stop();
+};
 ```
 
 ## Health Checks
