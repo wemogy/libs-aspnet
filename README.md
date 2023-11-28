@@ -130,18 +130,16 @@ Use Activities in your Code to create sections of code that can be traced.
 ```csharp
 using (var fistActivity = Observability.DefaultActivities.StartActivity("First section"))
 {
-    fistActivity.AddTag("date", DateTime.UtcNow.ToString());
-    fistActivity.AddTag("section", "first");
+    fistActivity.AddTag("date", DateTime.UtcNow.ToString()); // Add optional tags
     Thread.Sleep(100); // Do work
-    fistActivity.Stop();
+    fistActivity.Stop(); // Stop activity
 };
 
 using (var secondActivity = Observability.DefaultActivities.StartActivity("Second section"))
 {
-    secondActivity.AddTag("date", DateTime.UtcNow.ToString());
-    secondActivity.AddTag("section", "second");
+    secondActivity.AddTag("foo", "far"); // Add optional tags
     Thread.Sleep(200); // Do work
-    secondActivity.Stop();
+    secondActivity.Stop();  // Stop activity
 };
 ```
 
