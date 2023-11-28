@@ -56,6 +56,10 @@ namespace Wemogy.AspNet.Startup
 
             serviceCollection.AddDefaultControllers(options.DaprEnvironment != null, options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes);
 
+            // Health checks
+            var healthChecksBuilder = serviceCollection.AddHealthChecks();
+            options.ConfigureHealthCheckBuilder?.Invoke(healthChecksBuilder);
+
             serviceCollection.AddDefaultRouting();
         }
 
@@ -120,9 +124,9 @@ namespace Wemogy.AspNet.Startup
             {
                 applicationBuilder.UseEndpoints(endpoints =>
                 {
-                    // Register endpoints for Dapr PubSub subscription information
-                    endpoints.MapSubscribeHandler();
+                    endpoints.MapSubscribeHandler(); // Register endpoints for Dapr PubSub
                     endpoints.MapControllers();
+                    endpoints.MapHealthChecks("/healthz");
                 });
             }
             else
