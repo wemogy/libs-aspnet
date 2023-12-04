@@ -150,6 +150,7 @@ namespace Wemogy.AspNet.Startup
             applicationBuilder.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHealthChecks("/healthz");
             });
         }
 
