@@ -35,29 +35,55 @@ public Startup(IConfiguration configuration)
 }
 ```
 
-Add the `StartupOptions` and register the default setup.
+Add the `StartupOptions` and register the default setup using the `AddDefaultSetup` extension method. Alternatively, you can also register our defaults manually in case you need to tweak in some of your own adjustments.
 
 ```csharp
 public void ConfigureServices(IServiceCollection services)
 {
+    // Register all options automatically
     services.AddDefaultSetup(_options);
 
-    // ...
+    // or
+
+    // Register the options manually
+    services.AddDefaultCors();
+    services.AddDefaultSwagger(_options.OpenApiEnvironment);
+    services.AddDefaultMonitoring(_options.MonitoringEnvironment);
+    services.AddDefaultControllers(_options.DaprEnvironment != null, _options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes);
+    services.AddDefaultHealthChecks(_options);
+    services.AddDefaultRouting();
 }
 ```
 
-Make sure, the default setup gets used.
+Make sure, the default setup is getting used. Again, you can either use the `UseDefaultSetup` extension method or use the options manually, in case you need to tweak in some of your own adjustments.
+
+```csharp
 
 ```csharp
 public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 {
     app.UseDefaultSetup(env, _options);
 
-    // ...
+    // or
+
+    if (env.IsDevelopment())
+    {
+        app.UseDeveloperExceptionPage();
+    }
+
+    app.UseDefaultCors();
+    app.UseDefaultSwagger(_options.OpenApiEnvironment);
+    app.UseDefaultMonitoring(_options.MonitoringEnvironment);
+    app.UseDefaultRouting();
+    app.UseCloudEvents(); // when using Dapr
+    app.UseAuthentication();
+    app.UseAuthorization();
+    app.UseErrorHandlerMiddleware();
+    app.UseDefaultEndpoints(_options);
 }
 ```
 
-For modern or Minimal API services, this would look similar to this. In the `Program.cs`, add the `StartupOptions` and register the default setup.
+For modern or Minimal API services (introduced in .NET 6), this would look similar to this. In the `Program.cs`, add the `StartupOptions` and register the default setup.
 
 ```csharp
 var options = new StartupOptions();
@@ -70,6 +96,7 @@ options
 
 // ...
 
+app.AddDefaultSetup(options);
 app.UseDefaultSetup(app.Environment, options);
 ```
 
