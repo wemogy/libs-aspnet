@@ -47,6 +47,11 @@ namespace Wemogy.AspNet.Monitoring
                 builder.AddAspNetCoreInstrumentation();
                 builder.AddEntityFrameworkCoreInstrumentation();
 
+                foreach (var activitySourceName in environment.ActivitySourceNames)
+                {
+                    builder.AddSource(activitySourceName);
+                }
+
                 if (environment.UseOtlpExporter)
                 {
                     builder.AddOtlpExporter(options =>

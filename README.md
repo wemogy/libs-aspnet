@@ -21,6 +21,10 @@ public Startup(IConfiguration configuration)
 
     _options = new StartupOptions();
 
+    // Middleware
+    _options
+      .AddMiddleware<ApiExceptionFilter>();
+
     // Add Swagger
     _options
         .AddOpenApi("v1")
@@ -29,7 +33,8 @@ public Startup(IConfiguration configuration)
 
     // Add Monitoring
     _options
-        .AddMonitoring(Configuration["ServiceName"], Configuration["ServiceVersion"])
+        .AddMonitoring()
+        .WithMeter(Observability.Meter.Name)
         .WithApplicationInsights(Configuration["AzureApplicationInsightsConnectionString"])
         .WithPrometheus();
 }
@@ -109,12 +114,16 @@ We use Open Telemetry to provide monitoring for your application. The library pr
 Every project should have a `Observability.cs` class, which is responsible for defining the Meters.
 
 ```csharp
+using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using System.Reflection;
 using OpenTelemetry.Metrics;
 
 public class Observability
 {
+    // Define a default ActivitySource
+    public static readonly ActivitySource DefaultActivities = new ActivitySource("ServiceName");
+
     // Define a default Meter with name and version
     public static readonly Meter Meter = new("ServiceName", Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "0.0.0");
 
@@ -129,7 +138,8 @@ Make sure to register the Meter at Startup.
 ```csharp
 var options = new StartupOptions();
 options
-    .AddMonitoring(Configuration["ServiceName"], Configuration["ServiceVersion"])
+    .AddMonitoring()
+    .WithActivitySource(Observability.DefaultActivities.Name)
     .WithMeter(Observability.Meter.Name)
     // ...
 ```
@@ -140,4 +150,43 @@ Use the Meter in your code.
 Observability.Pings.Add(1);
 
 Observability.PingDelay.Record(new Random().Next(50, 100));
+```
+
+Use Activities in your Code to create sections of code that can be traced.
+
+```csharp
+using (var fistActivity = Observability.DefaultActivities.StartActivity("First section"))
+{
+    fistActivity?.AddTag("date", DateTime.UtcNow.ToString()); // Add optional tags
+    Thread.Sleep(100); // Do work
+    fistActivity?.Stop(); // Stop activity
+};
+
+using (var secondActivity = Observability.DefaultActivities.StartActivity("Second section"))
+{
+    secondActivity?.AddTag("foo", "far"); // Add optional tags
+    Thread.Sleep(200); // Do work
+    secondActivity?.Stop();  // Stop activity
+};
+```
+
+## Health Checks
+
+The library automatically includes a health check endpoint at `/healthz`, which checks the basic health of the service.
+
+You can add additional health checks to the default setup.
+
+- Inline Health Checks
+- Custom Health Checks, that implement the IHealthCheck interface
+- [Database Health Checks](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-6.0#database-probe)
+- [Entity Framework Core DbContext probes](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-6.0#entity-framework-core-dbcontext-probe)
+
+```csharp
+_options.ConfigureHealthChecks(builder => {
+    builder
+        .AddCheck("MyHealthCheck", () => HealthCheckResult.Healthy("Everything is fine.")
+        .AddCheck("MyOtherHealthCheck", MyHealthChecker) // Implement IHealthCheck
+        .AddSqlServer("<MY_CONNECTION_STRING>")
+        .AddDbContextCheck<SampleDbContext>();
+});
 ```

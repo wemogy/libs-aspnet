@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 using Wemogy.AspNet.Dapr;
 using Wemogy.AspNet.Monitoring;
 using Wemogy.AspNet.Swagger;
@@ -15,6 +16,7 @@ public class StartupOptions
     internal MonitoringEnvironment? MonitoringEnvironment { get; private set; }
     internal DaprEnvironment? DaprEnvironment { get; private set; }
     internal HashSet<Type> Middlewares { get; private set; }
+    internal Action<IHealthChecksBuilder>? ConfigureHealthCheckBuilder { get; private set; }
 
     /// <summary>
     /// Sets the <see cref="Microsoft.AspNetCore.Mvc.MvcOptions.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes"/> property for all contollers.
@@ -66,6 +68,12 @@ public class StartupOptions
         where TMiddleware : class
     {
         Middlewares.Add(typeof(TMiddleware));
+        return this;
+    }
+
+    public StartupOptions ConfigureHealthChecks(Action<IHealthChecksBuilder> configure)
+    {
+        ConfigureHealthCheckBuilder = configure;
         return this;
     }
 }
