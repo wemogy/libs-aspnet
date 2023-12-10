@@ -61,6 +61,7 @@ namespace Wemogy.AspNet.Monitoring
                 }
             });
 
+            // Azure
             if (environment.UseApplicationInsights)
             {
                 services.AddOpenTelemetry().UseAzureMonitor(options =>
