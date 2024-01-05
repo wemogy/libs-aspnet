@@ -47,7 +47,15 @@ public void ConfigureServices(IServiceCollection services)
 {
     services.AddDefaultSetup(_options);
 
-    // ...
+    // or
+
+    // Register the options manually
+    services.AddDefaultCors();
+    services.AddDefaultSwagger(_options);
+    services.AddDefaultMonitoring(_options);
+    services.AddDefaultControllers(_options, _options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes);
+    services.AddDefaultHealthChecks(_options);
+    services.AddDefaultRouting();
 }
 ```
 
@@ -58,7 +66,22 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 {
     app.UseDefaultSetup(env, _options);
 
-    // ...
+    // or
+
+    if (env.IsDevelopment())
+    {
+        app.UseDeveloperExceptionPage();
+    }
+
+    app.UseDefaultCors();
+    app.UseDefaultSwagger(_options);
+    app.UseDefaultMonitoring(_options);
+    app.UseDefaultRouting();
+    app.UseCloudEvents(); // when using Dapr
+    app.UseAuthentication();
+    app.UseAuthorization();
+    app.UseErrorHandlerMiddleware();
+    app.UseDefaultEndpoints(_options);
 }
 ```
 
