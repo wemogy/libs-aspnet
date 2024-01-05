@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Wemogy.AspNet.Startup;
 using Wemogy.Core.Extensions;
 
 namespace Wemogy.AspNet.Swagger
@@ -11,11 +13,16 @@ namespace Wemogy.AspNet.Swagger
     {
         public static IServiceCollection AddDefaultSwagger(
             this IServiceCollection services,
-            OpenApiEnvironment environment)
+            StartupOptions options)
         {
+            if (options.OpenApiEnvironment == null)
+            {
+                throw new ArgumentException("OpenApiEnvironment is not configured.");
+            }
+
             services.AddSwaggerGen(c =>
             {
-                foreach (var configure in environment.SwaggerGenOptions)
+                foreach (var configure in options.OpenApiEnvironment.SwaggerGenOptions)
                 {
                     configure(c);
                 }
@@ -24,12 +31,17 @@ namespace Wemogy.AspNet.Swagger
             return services;
         }
 
-        public static void UseDefaultSwagger(this IApplicationBuilder applicationBuilder, OpenApiEnvironment environment)
+        public static void UseDefaultSwagger(this IApplicationBuilder applicationBuilder, StartupOptions options)
         {
+            if (options.OpenApiEnvironment == null)
+            {
+                throw new ArgumentException("OpenApiEnvironment is not configured.");
+            }
+
             applicationBuilder.UseSwagger();
             applicationBuilder.UseSwaggerUI(c =>
             {
-                foreach (var group in environment.OpenApiGroups)
+                foreach (var group in options.OpenApiEnvironment.OpenApiGroups)
                 {
                     // Only publish groups that are marked as publishable
                     if (group.Value.Publish)

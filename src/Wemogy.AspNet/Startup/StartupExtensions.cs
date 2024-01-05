@@ -29,12 +29,12 @@ namespace Wemogy.AspNet.Startup
             options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = suppressImplicitRequiredAttributeForNonNullableReferenceTypes;
         }
 
-        public static void AddDefaultControllers(this IServiceCollection serviceCollection, bool addDapr = false, bool suppressImplicitRequiredAttributeForNonNullableReferenceTypes = false)
+        public static void AddDefaultControllers(this IServiceCollection serviceCollection, StartupOptions options, bool suppressImplicitRequiredAttributeForNonNullableReferenceTypes = false)
         {
             var builder = serviceCollection.AddControllers(options => GetWemogyDefaultControllerOptions(options, suppressImplicitRequiredAttributeForNonNullableReferenceTypes));
             builder.AddWemogyJsonOptions();
 
-            if (addDapr)
+            if (options.DaprEnvironment != null)
             {
                 builder.AddDapr();
             }
@@ -46,15 +46,15 @@ namespace Wemogy.AspNet.Startup
 
             if (options.OpenApiEnvironment != null)
             {
-                serviceCollection.AddDefaultSwagger(options.OpenApiEnvironment);
+                serviceCollection.AddDefaultSwagger(options);
             }
 
             if (options.MonitoringEnvironment != null)
             {
-                serviceCollection.AddDefaultMonitoring(options.MonitoringEnvironment);
+                serviceCollection.AddDefaultMonitoring(options);
             }
 
-            serviceCollection.AddDefaultControllers(options.DaprEnvironment != null, options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes);
+            serviceCollection.AddDefaultControllers(options, options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes);
 
             serviceCollection.AddDefaultHealthChecks(options);
 
@@ -100,12 +100,12 @@ namespace Wemogy.AspNet.Startup
 
             if (options.OpenApiEnvironment != null)
             {
-                applicationBuilder.UseDefaultSwagger(options.OpenApiEnvironment);
+                applicationBuilder.UseDefaultSwagger(options);
             }
 
             if (options.MonitoringEnvironment != null)
             {
-                applicationBuilder.UseDefaultMonitoring(options.MonitoringEnvironment);
+                applicationBuilder.UseDefaultMonitoring(options);
             }
 
             applicationBuilder.UseDefaultRouting();
