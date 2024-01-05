@@ -42,7 +42,7 @@
     <PackageReference Include="RestSharp" Version="107.3.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.4.0" />
-    <PackageReference Include="Wemogy.Core" Version="3.1.2" />
+    <PackageReference Include="Wemogy.Core" Version="3.2.0" />
     <PackageReference Include="Dapr.AspNetCore" Version="1.10.0" />
   </ItemGroup>
 </Project>

@@ -56,9 +56,7 @@ namespace Wemogy.AspNet.Startup
 
             serviceCollection.AddDefaultControllers(options, options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes);
 
-            // Health checks
-            var healthChecksBuilder = serviceCollection.AddHealthChecks();
-            options.ConfigureHealthCheckBuilder?.Invoke(healthChecksBuilder);
+            serviceCollection.AddDefaultHealthChecks(options);
 
             serviceCollection.AddDefaultRouting();
         }
@@ -75,6 +73,12 @@ namespace Wemogy.AspNet.Startup
                         .AllowAnyHeader();
                 });
             });
+        }
+
+        public static void AddDefaultHealthChecks(this IServiceCollection serviceCollection, StartupOptions options)
+        {
+            var healthChecksBuilder = serviceCollection.AddHealthChecks();
+            options.ConfigureHealthCheckBuilder?.Invoke(healthChecksBuilder);
         }
 
         public static void AddDefaultRouting(this IServiceCollection serviceCollection)
@@ -120,19 +124,7 @@ namespace Wemogy.AspNet.Startup
                 applicationBuilder.UseMiddleware(middleware);
             }
 
-            if (options.DaprEnvironment != null)
-            {
-                applicationBuilder.UseEndpoints(endpoints =>
-                {
-                    endpoints.MapSubscribeHandler(); // Register endpoints for Dapr PubSub
-                    endpoints.MapControllers();
-                    endpoints.MapHealthChecks("/healthz");
-                });
-            }
-            else
-            {
-                applicationBuilder.UseDefaultEndpoints();
-            }
+            applicationBuilder.UseDefaultEndpoints(options);
         }
 
         public static void UseDefaultRouting(this IApplicationBuilder applicationBuilder)
@@ -145,12 +137,17 @@ namespace Wemogy.AspNet.Startup
             applicationBuilder.UseCors();
         }
 
-        public static void UseDefaultEndpoints(this IApplicationBuilder applicationBuilder)
+        public static void UseDefaultEndpoints(this IApplicationBuilder applicationBuilder, StartupOptions options)
         {
             applicationBuilder.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
                 endpoints.MapHealthChecks("/healthz");
+
+                if (options.DaprEnvironment != null)
+                {
+                    endpoints.MapSubscribeHandler(); // Register endpoints for Dapr PubSub
+                }
             });
         }
 
