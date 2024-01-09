@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using FluentValidation;
@@ -83,5 +84,34 @@ public class ErrorHandlerMiddlewareTests
 
         // Assert
         context.Response.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task CanceledRequestShouldBeIgnored()
+    {
+        // Arrange
+        var abortedCts = new CancellationTokenSource();
+        var context = new DefaultHttpContext
+        {
+            RequestServices = new ServiceCollection()
+                .AddLogging()
+                .BuildServiceProvider(),
+            RequestAborted = abortedCts.Token
+        };
+        var next = new RequestDelegate(
+            c =>
+            {
+                // simulate that somewhere in the pipeline we are checking for cancellation
+                c.RequestAborted.ThrowIfCancellationRequested();
+                return Task.CompletedTask;
+            });
+        var middleware = new ErrorHandlerMiddleware(next);
+
+        // Act
+        abortedCts.Cancel(); // simulate that the request was aborted
+        var exception = await Record.ExceptionAsync(() => middleware.InvokeAsync(context));
+
+        // Assert
+        exception.Should().BeNull();
     }
 }

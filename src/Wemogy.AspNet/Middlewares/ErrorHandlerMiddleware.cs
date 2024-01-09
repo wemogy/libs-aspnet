@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using FluentValidation;
@@ -65,6 +66,17 @@ namespace Wemogy.AspNet.Middlewares
                 var response = context.Response;
                 response.StatusCode = (int)HttpStatusCode.BadRequest;
                 await response.WriteAsJsonAsync(exception.Errors);
+            }
+
+            // Catch OperationCanceledException, when the request is aborted
+            catch (OperationCanceledException)
+            {
+                if (context.RequestAborted.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                throw;
             }
         }
     }
