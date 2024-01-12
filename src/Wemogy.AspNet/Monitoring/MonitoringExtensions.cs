@@ -21,10 +21,17 @@ namespace Wemogy.AspNet.Monitoring
                 throw new ArgumentException("MonitoringEnvironment is not configured.");
             }
 
+            return services.AddDefaultMonitoring(options.MonitoringEnvironment);
+        }
+
+        public static IServiceCollection AddDefaultMonitoring(
+            this IServiceCollection services,
+            MonitoringEnvironment monitoringEnvironment)
+        {
             // Metrics
             services.AddOpenTelemetry().WithMetrics(builder =>
             {
-                foreach (var meterName in options.MonitoringEnvironment.MeterNames)
+                foreach (var meterName in monitoringEnvironment.MeterNames)
                 {
                     builder.AddMeter(meterName);
                 }
@@ -33,7 +40,7 @@ namespace Wemogy.AspNet.Monitoring
                 builder.AddHttpClientInstrumentation();
                 builder.AddAspNetCoreInstrumentation();
 
-                if (options.MonitoringEnvironment.UsePrometheus)
+                if (monitoringEnvironment.UsePrometheus)
                 {
                     builder.AddPrometheusExporter();
                 }
@@ -45,40 +52,40 @@ namespace Wemogy.AspNet.Monitoring
                 builder.ConfigureResource((resource) =>
                 {
                     resource.AddService(
-                        serviceName: options.MonitoringEnvironment.ServiceName,
-                        serviceNamespace: options.MonitoringEnvironment.ServiceNamespace,
-                        serviceInstanceId: options.MonitoringEnvironment.ServiceInstanceId,
-                        serviceVersion: options.MonitoringEnvironment.ServiceVersion);
+                        serviceName: monitoringEnvironment.ServiceName,
+                        serviceNamespace: monitoringEnvironment.ServiceNamespace,
+                        serviceInstanceId: monitoringEnvironment.ServiceInstanceId,
+                        serviceVersion: monitoringEnvironment.ServiceVersion);
                 });
 
                 builder.AddAspNetCoreInstrumentation();
                 builder.AddEntityFrameworkCoreInstrumentation();
 
-                foreach (var activitySourceName in options.MonitoringEnvironment.ActivitySourceNames)
+                foreach (var activitySourceName in monitoringEnvironment.ActivitySourceNames)
                 {
                     builder.AddSource(activitySourceName);
                 }
 
-                if (options.MonitoringEnvironment.UseOtlpExporter)
+                if (monitoringEnvironment.UseOtlpExporter)
                 {
                     builder.AddOtlpExporter(oltpOptions =>
                     {
-                        oltpOptions.Endpoint = options.MonitoringEnvironment.OtlpExportEndpoint;
+                        oltpOptions.Endpoint = monitoringEnvironment.OtlpExportEndpoint;
                     });
                 }
             });
 
             // Azure
-            if (options.MonitoringEnvironment.UseApplicationInsights)
+            if (monitoringEnvironment.UseApplicationInsights)
             {
                 services.AddOpenTelemetry().UseAzureMonitor(azureMonitorOptions =>
                 {
-                    azureMonitorOptions.ConnectionString = options.MonitoringEnvironment.ApplicationInsightsConnectionString;
-                    azureMonitorOptions.SamplingRatio = options.MonitoringEnvironment.ApplicationInsightsSamplingRatio;
+                    azureMonitorOptions.ConnectionString = monitoringEnvironment.ApplicationInsightsConnectionString;
+                    azureMonitorOptions.SamplingRatio = monitoringEnvironment.ApplicationInsightsSamplingRatio;
                 });
             }
 
-            services.AddSingleton(options.MonitoringEnvironment);
+            services.AddSingleton(monitoringEnvironment);
             return services;
         }
 
@@ -91,7 +98,14 @@ namespace Wemogy.AspNet.Monitoring
                 throw new ArgumentException("OpenApiEnvironment is not configured.");
             }
 
-            if (options.MonitoringEnvironment.UsePrometheus)
+            applicationBuilder.UseDefaultMonitoring(options.MonitoringEnvironment);
+        }
+
+        public static void UseDefaultMonitoring(
+            this IApplicationBuilder applicationBuilder,
+            MonitoringEnvironment monitoringEnvironment)
+        {
+            if (monitoringEnvironment.UsePrometheus)
             {
                 applicationBuilder.UseOpenTelemetryPrometheusScrapingEndpoint();
             }
