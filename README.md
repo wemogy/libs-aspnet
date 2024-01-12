@@ -63,8 +63,6 @@ public void ConfigureServices(IServiceCollection services)
 Make sure, the default setup is getting used. Again, you can either use the `UseDefaultSetup` extension method or use the options manually, in case you need to tweak in some of your own adjustments.
 
 ```csharp
-
-```csharp
 public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 {
     app.UseDefaultSetup(env, _options);
