@@ -81,7 +81,7 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     app.UseCloudEvents(); // when using Dapr
     app.UseAuthentication();
     app.UseAuthorization();
-    app.UseErrorHandlerMiddleware();
+    app.UseDefaultMiddleware(_options);
     app.UseDefaultEndpoints(_options);
 }
 ```

@@ -5,10 +5,12 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Wemogy.AspNet.FluentValidation;
 using Wemogy.AspNet.Formatters;
 using Wemogy.AspNet.Json;
 using Wemogy.AspNet.Middlewares;
 using Wemogy.AspNet.Monitoring;
+using Wemogy.AspNet.Refit;
 using Wemogy.AspNet.Swagger;
 using Wemogy.AspNet.Transformers;
 
@@ -118,11 +120,7 @@ namespace Wemogy.AspNet.Startup
             applicationBuilder.UseAuthentication();
             applicationBuilder.UseAuthorization();
 
-            applicationBuilder.UseErrorHandlerMiddleware();
-            foreach (var middleware in options.Middlewares)
-            {
-                applicationBuilder.UseMiddleware(middleware);
-            }
+            applicationBuilder.UseDefaultMiddleware(options);
 
             applicationBuilder.UseDefaultEndpoints(options);
         }
@@ -135,6 +133,33 @@ namespace Wemogy.AspNet.Startup
         public static void UseDefaultCors(this IApplicationBuilder applicationBuilder)
         {
             applicationBuilder.UseCors();
+        }
+
+        /// <summary>
+        /// Adds the default exception handling middleware from this library
+        /// and additional middlewares defined in the StartupOptions to the pipeline.
+        /// </summary>
+        public static void UseDefaultMiddleware(this IApplicationBuilder applicationBuilder, StartupOptions options)
+        {
+            // Standard exception handling middleware
+            applicationBuilder.UseExceptionHandlerMiddleware();
+
+            // Additional optional middleware
+            foreach (var middleware in options.Middlewares)
+            {
+                applicationBuilder.UseMiddleware(middleware);
+            }
+        }
+
+        /// <summary>
+        /// Adds the default exception handling middleware from this library to the pipeline.
+        /// </summary>
+        public static void UseExceptionHandlerMiddleware(this IApplicationBuilder applicationBuilder)
+        {
+            applicationBuilder.UseMiddleware<ErrorExceptionHandlerMiddleware>();
+            applicationBuilder.UseMiddleware<SystemExceptionHandlerMiddleware>();
+            applicationBuilder.UseMiddleware<RefitExceptionHandlerMiddleware>();
+            applicationBuilder.UseMiddleware<FluentValidationExceptionHandlerMiddleware>();
         }
 
         public static void UseDefaultEndpoints(this IApplicationBuilder applicationBuilder, StartupOptions options)

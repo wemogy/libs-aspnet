@@ -7,11 +7,11 @@ using Wemogy.Core.Errors.Exceptions;
 
 namespace Wemogy.AspNet.Middlewares
 {
-    public class ErrorHandlerMiddleware
+    public class ErrorExceptionHandlerMiddleware
     {
         private readonly RequestDelegate _next;
 
-        public ErrorHandlerMiddleware(RequestDelegate next)
+        public ErrorExceptionHandlerMiddleware(RequestDelegate next)
         {
             _next = next;
         }
