@@ -120,7 +120,7 @@ app.AddDefaultSetup(options);
 app.UseDefaultSetup(app.Environment, options);
 ```
 
-## Monitoring
+## Monitoring and Logging
 
 We use Open Telemetry to provide monitoring for your application. The library provides a default setup for you, which you can use as is or extend to your needs. Open Telemetry interacts with the native Metrics and Tracing capabilities of ASP.NET.
 
@@ -145,6 +145,12 @@ public class Observability
     // Create Counters, Histograms, etc. from that default Meter
     public  static readonly Counter<long> Pings = Meter.CreateCounter<long>("service_countername", description: "Total number of pings");
     public static readonly Histogram<int> PingDelay = Meter.CreateHistogram<int>("service_histgramname", "ms", "Think time in ms for a ping");
+
+    public static void ConfigureStandardLogger(this ILoggingBuilder builder)
+    {
+        builder.ClearProviders();
+        builder.AddConsole();
+    }
 }
 ```
 
