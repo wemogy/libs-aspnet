@@ -25,18 +25,22 @@ public Startup(IConfiguration configuration)
     _options
       .AddMiddleware<ApiExceptionFilter>();
 
-    // Add Swagger
+    // Swagger
     _options
         .AddOpenApi("v1")
         .WithApiGroup("public", "Fancy API", "This is my fancy API.")
         .WithSecurityScheme(SecuritySchemeDefaults.JwtBearer);
 
-    // Add Monitoring
+    // Monitoring
     _options
         .AddMonitoring()
         .WithMeter(Observability.Meter.Name)
         .WithApplicationInsights(Configuration["AzureApplicationInsightsConnectionString"])
         .WithPrometheus();
+
+    // Health Checks
+    _options.ConfigureHealthChecks(builder =>
+        builder.AddCheck("MyHealthCheck", () => HealthCheckResult.Healthy("Everything is fine."));
 }
 ```
 
@@ -90,14 +94,27 @@ For modern or Minimal API services (introduced in .NET 6), this would look simil
 
 ```csharp
 var options = new StartupOptions();
+
+// Middleware
+options
+    .AddMiddleware<ApiExceptionFilter>();
+
+// Swagger
 options
     .AddOpenApi("v1")
+    .WithApiGroup("public", "Fancy API", "This is my fancy API.")
+    .WithSecurityScheme(SecuritySchemeDefaults.JwtBearer);
 
+// Monitoring
 options
     .AddMonitoring()
+    .WithMeter(Observability.Meter.Name)
     .WithApplicationInsights(Configuration["AzureApplicationInsightsConnectionString"])
+    .WithPrometheus();
 
-// ...
+// Health Checks
+options.ConfigureHealthChecks(builder =>
+    builder.AddCheck("MyHealthCheck", () => HealthCheckResult.Healthy("Everything is fine."));
 
 app.AddDefaultSetup(options);
 app.UseDefaultSetup(app.Environment, options);
