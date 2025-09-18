@@ -11,10 +11,10 @@ jobs:
     name: Tests
     runs-on: ubuntu-latest
     permissions:
-      pull-requests: write
       contents: read
+      pull-requests: write
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       # .NET Tests
       - name: Build .NET
@@ -36,7 +36,7 @@ jobs:
           output: 'both'
 
       - name: Add Coverage PR Comment
-        uses: marocchino/sticky-pull-request-comment@v2.5.0
+        uses: marocchino/sticky-pull-request-comment@v2
         if: github.event_name == 'pull_request'
         with:
           recreate: true
