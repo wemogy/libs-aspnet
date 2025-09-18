@@ -25,7 +25,9 @@ namespace Wemogy.AspNet.Controllers
         protected ApiGatewayBase(string baseUrl, IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
-            _restClient = new RestClient(baseUrl).UseSystemTextJson(WemogyJson.Options);
+            _restClient = new RestClient(
+                    baseUrl,
+                    configureSerialization: s => s.UseSystemTextJson(WemogyJson.Options));
         }
 
         private ICollection<KeyValuePair<string, string>> GetHeadersMapped()

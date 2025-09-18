@@ -1,8 +1,6 @@
-using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Wemogy.AspNet.FluentValidation;
@@ -174,41 +172,6 @@ namespace Wemogy.AspNet.Startup
                     endpoints.MapSubscribeHandler(); // Register endpoints for Dapr PubSub
                 }
             });
-        }
-
-        /// <summary>
-        /// Adds Azure Key Vault secrets to the configuration based on one of these authentication methods:
-        /// Identity: The calling application has an Azure Identity, and can authenticate against Azure Key Vault
-        /// Service Principal: The calling application has Client ID and Secret of an Azure Service Principal
-        /// </summary>
-        /// <param name="builder">An IConfigurationBuilder</param>
-        /// <param name="azureKeyVaultUri">The URI to the Azure Key Vault</param>
-        /// <param name="azureKeyVaultClientId">Fill, if you want to authenticate with a Service Principal, leave empty for Identity</param>
-        /// <param name="azureKeyVaultClientSecret">Secret. Fill, if you want to authenticate with a Service Principal, leave empty for Identity</param>
-        public static IConfigurationBuilder AddAuthenticatedAzureKeyVault(
-            this IConfigurationBuilder builder,
-            string azureKeyVaultUri,
-            string? azureKeyVaultClientId = null,
-            string? azureKeyVaultClientSecret = null)
-        {
-            // The clientId and clientSecrets fields should be left empty, as we always
-            // prefer connecting to Azure KeyVault using a manage identity of the system we are
-            // running on. Only in edge scenarios, we can provide an Client ID and Secret of an
-            // Azure Service principal that has access to Key Vault.
-            if (!string.IsNullOrEmpty(azureKeyVaultClientId) && !string.IsNullOrEmpty(azureKeyVaultClientSecret))
-            {
-                Console.Write($"Adding Azure KeyVault '{azureKeyVaultUri}' to configuration using credentials...");
-                builder.AddAzureKeyVault(azureKeyVaultUri, azureKeyVaultClientId, azureKeyVaultClientSecret);
-            }
-            else
-            {
-                Console.Write($"Adding Azure KeyVault '{azureKeyVaultUri}' to configuration using identity...");
-                builder.AddAzureKeyVault(azureKeyVaultUri);
-            }
-
-            Console.WriteLine("done.");
-
-            return builder;
         }
     }
 }
