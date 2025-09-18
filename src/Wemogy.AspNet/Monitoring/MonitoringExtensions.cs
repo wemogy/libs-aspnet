@@ -59,7 +59,7 @@ namespace Wemogy.AspNet.Monitoring
                     builder.AddSource(activitySourceName);
                 }
 
-                if (options.MonitoringEnvironment.UseOtlpExporter)
+                if (options.MonitoringEnvironment.UseOtlpExporter && options.MonitoringEnvironment.OtlpExportEndpoint != null)
                 {
                     builder.AddOtlpExporter(oltpOptions =>
                     {
