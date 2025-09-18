@@ -3,38 +3,50 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
+      version:
+        description: Version to release, e.g. 1.0.0
+        type: string
+        required: false
       pre-release:
         description: Genereates a Pre-Release when checked
         type: boolean
         required: false
-        default: "false"
+        default: false
   push:
     branches:
-      - release/**
+      - release
 
 jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: "write"
+      packages: "write"
     steps:
-      - name: Get version for next release
-        if: ${{ github.event.inputs.version == '' }}
-        uses: wemogy/next-version-action@2.0.3
-        id: release-version
+      - name: Clone repository
+        uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
-      - uses: actions/checkout@v2
+      - name: Get version for next release
+        uses: wemogy/get-release-version-action@v4.3.2
+        id: release-version
+        if: ${{ github.event.inputs.version == '' }}
+        with:
+          prefix: v
+          create-tag: 'true'
+          git-username: wemogy IT
+          git-email: it@wemogy.com
+          mode: semantic
 
       # Nuget
       - name: Build .NET
         uses: ./.github/actions/dotnet
         with:
-          version: ${{ steps.release-version.outputs.next-version }}${{ github.event.inputs.version && 'pre' || '' }}
+          version: ${{ github.event.inputs.version || steps.release-version.outputs.version }}
       - name: Create Nuget package(s)
-        run: dotnet pack --no-build --configuration Release /p:VersionPrefix=${{ steps.release-version.outputs.next-version }}${{ github.event.inputs.version && 'pre' || '' }}
+        run: dotnet pack --configuration Release /p:VersionPrefix=${{ github.event.inputs.version || steps.release-version.outputs.version }}
         working-directory: src
       - name: Publish Nuget package(s)
         run: dotnet nuget push **/**/*.nupkg --skip-duplicate --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.PUBLIC_NUGET_TOKEN }}
@@ -44,8 +56,8 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          name: Version ${{ steps.release-version.outputs.next-version }}${{ github.event.inputs.version && 'pre' || '' }}
-          tag_name: ${{ steps.release-version.outputs.next-version-name }}${{ github.event.inputs.version && 'pre' || '' }}
+          name: Version ${{ github.event.inputs.version || steps.release-version.outputs.version }}
+          tag_name: ${{ github.event.inputs.version && format('v{0}', github.event.inputs.version) || steps.release-version.outputs.version-name }}
           prerelease: ${{ github.event.inputs.pre-release || false }}
           generate_release_notes: true
         env:
