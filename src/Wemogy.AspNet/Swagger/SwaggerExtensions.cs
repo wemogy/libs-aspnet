@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Wemogy.AspNet.Startup;
 using Wemogy.Core.Extensions;
@@ -105,17 +105,10 @@ namespace Wemogy.AspNet.Swagger
             }
 
             c.AddSecurityDefinition(name, scheme);
-            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            c.AddSecurityRequirement(document => new OpenApiSecurityRequirement
             {
                 {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Id = name,
-                            Type = ReferenceType.SecurityScheme
-                        }
-                    }, new List<string>()
+                    new OpenApiSecuritySchemeReference(name, document), new List<string>()
                 }
             });
         }
